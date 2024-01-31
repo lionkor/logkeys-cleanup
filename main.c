@@ -15,10 +15,12 @@ static char in_buf[4096];
 // buffer used to write results into
 static char out_buf[4096];
 
+#define min(x, y) (x < y ? x : y)
+
 // compares if str1 starts with str2
-bool safe_str_startswith(const char* str1, size_t str1len, const char* str2) {
-    size_t str2len = strlen(str2);
-    return strncmp(str1, str2, (str2len < str1len ? str2len : str1len)) == 0;
+bool safe_str_startswith(const char* str1, size_t str1len, const char* str2, size_t str2len) {
+    // use the shorter of the two lengths for the memcmp to avoid out-of-bounds access
+    return memcmp(str1, str2, min(str1len, str2len)) == 0;
 }
 
 static const char* s_control_sequences[] = {
