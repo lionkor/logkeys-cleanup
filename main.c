@@ -23,40 +23,54 @@ bool safe_str_startswith(const char* str1, size_t str1len, const char* str2, siz
     return memcmp(str1, str2, min(str1len, str2len)) == 0;
 }
 
-static const char* s_control_sequences[] = {
-    "Enter",
-    "Up",
-    "Esc",
-    "Home",
-    "End",
-    "Tab",
-    "Del",
-    "Down",
-    "PgUp",
-    "PgDown",
-    "BckSp",
-    "Right",
-    "Left",
-    "Up",
-    "Down",
-    "LMeta",
-    "RShft",
-    "LShft",
-    "LCtrl",
-    "RCtrl",
-    "Alt",
-    "LAlt",
-    "RAlt",
-    "#+", // special sequence followed by numbers
-};
+// this macro fills a StaticString struct with
+// compile-time length of s.
+// s must be a strin  literal.
+#define STATIC_STR(s) \
+    { s, sizeof(s) - 1 }
+
+// string + string length
+static struct StaticString {
+    const char* str;
+    size_t len;
+}
+// all control sequences the program should filter.
+// these are initialized with the STATIC_STR macro to
+// determine the string's lengths at compile-time.
+s_control_sequences[]
+    = {
+          STATIC_STR("#+"), // special sequence followed by numbers
+          STATIC_STR("Alt"),
+          STATIC_STR("BckSp"),
+          STATIC_STR("Del"),
+          STATIC_STR("Down"),
+          STATIC_STR("Down"),
+          STATIC_STR("End"),
+          STATIC_STR("Enter"),
+          STATIC_STR("Esc"),
+          STATIC_STR("Home"),
+          STATIC_STR("LAlt"),
+          STATIC_STR("LCtrl"),
+          STATIC_STR("LMeta"),
+          STATIC_STR("LShft"),
+          STATIC_STR("Left"),
+          STATIC_STR("PgDown"),
+          STATIC_STR("PgUp"),
+          STATIC_STR("RAlt"),
+          STATIC_STR("RCtrl"),
+          STATIC_STR("RShft"),
+          STATIC_STR("Right"),
+          STATIC_STR("Tab"),
+          STATIC_STR("Up"),
+      };
 
 // returns true for any strings which match a control sequence
 // output by logkeys. this list may not be complete.
 bool is_control(const char* str, size_t len) {
     bool match = false;
     // loop over all pre-programmed control sequences until one matches
-    for (size_t i = 0; !match && i < (sizeof(s_control_sequences) / sizeof(char*)); ++i) {
-        match = safe_str_startswith(str, len, s_control_sequences[i]);
+    for (size_t i = 0; !match && i < (sizeof(s_control_sequences) / sizeof(struct StaticString)); ++i) {
+        match = safe_str_startswith(str, len, s_control_sequences[i].str, s_control_sequences[i].len);
     }
     return match;
 }
