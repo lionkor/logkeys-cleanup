@@ -16,7 +16,7 @@ static char in_buf[4096];
 static char out_buf[4096];
 
 // compares if str1 starts with str2
-bool safe_str_startswith(const char* haystack, size_t haystack_len, const char* needle, size_t needle_len) {
+static bool safe_str_startswith(const char* haystack, size_t haystack_len, const char* needle, size_t needle_len) {
     if (haystack_len < needle_len) {
         // haystack too small to start with needle
         return false;
@@ -81,7 +81,7 @@ s_control_sequences[]
 
 // returns true for any strings which match a control sequence
 // output by logkeys. this list may not be complete.
-bool is_control(const char* str, size_t len) {
+static bool is_control(const char* str, size_t len) {
     bool match = false;
     // loop over all pre-programmed control sequences until one matches
     for (size_t i = 0; i < (sizeof(s_control_sequences) / sizeof(struct StaticString)); ++i) {
@@ -96,7 +96,7 @@ bool is_control(const char* str, size_t len) {
 // does the cleanup on a file, writing output to stdout.
 // removes all control characters.
 // returns 0 on success, non-zero on failure.
-int run(FILE* in) {
+static int run(FILE* in) {
     size_t n = 0;
     // keep reading until feof. ferror doesn't break the loop
     // and instead returns 1.
