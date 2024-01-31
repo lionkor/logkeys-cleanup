@@ -21,31 +21,42 @@ bool safe_str_startswith(const char* str1, size_t str1len, const char* str2) {
     return strncmp(str1, str2, (str2len < str1len ? str2len : str1len)) == 0;
 }
 
+static const char* s_control_sequences[] = {
+    "Enter",
+    "Up",
+    "Esc",
+    "Home",
+    "End",
+    "Tab",
+    "Del",
+    "Down",
+    "PgUp",
+    "PgDown",
+    "BckSp",
+    "Right",
+    "Left",
+    "Up",
+    "Down",
+    "LMeta",
+    "RShft",
+    "LShft",
+    "LCtrl",
+    "RCtrl",
+    "Alt",
+    "LAlt",
+    "RAlt",
+    "#+", // special sequence followed by numbers
+};
+
 // returns true for any strings which match a control sequence
 // output by logkeys. this list may not be complete.
 bool is_control(const char* str, size_t len) {
-    return safe_str_startswith(str, len, "Enter")
-        || safe_str_startswith(str, len, "Up")
-        || safe_str_startswith(str, len, "Esc")
-        || safe_str_startswith(str, len, "Home")
-        || safe_str_startswith(str, len, "End")
-        || safe_str_startswith(str, len, "Tab")
-        || safe_str_startswith(str, len, "Del")
-        || safe_str_startswith(str, len, "Down")
-        || safe_str_startswith(str, len, "PgUp")
-        || safe_str_startswith(str, len, "PgDown")
-        || safe_str_startswith(str, len, "BckSp")
-        || safe_str_startswith(str, len, "Right")
-        || safe_str_startswith(str, len, "LMeta")
-        || safe_str_startswith(str, len, "LShft")
-        || safe_str_startswith(str, len, "LCtrl")
-        || safe_str_startswith(str, len, "RCtrl")
-        || safe_str_startswith(str, len, "RShft")
-        || safe_str_startswith(str, len, "Alt")
-        || safe_str_startswith(str, len, "LAlt")
-        || safe_str_startswith(str, len, "RAlt")
-        || safe_str_startswith(str, len, "Left")
-        || (safe_str_startswith(str, len, "#+"));
+    bool match = false;
+    // loop over all pre-programmed control sequences until one matches
+    for (size_t i = 0; !match && i < (sizeof(s_control_sequences) / sizeof(char*)); ++i) {
+        match = safe_str_startswith(str, len, s_control_sequences[i]);
+    }
+    return match;
 }
 
 // does the cleanup on a file, writing output to stdout.
@@ -53,11 +64,11 @@ bool is_control(const char* str, size_t len) {
 // returns 0 on success, non-zero on failure.
 int run(FILE* in) {
     size_t n = 0;
-    // little tiny state machine :^)
-    enum State state = STATE_NORMAL;
     // keep reading until feof. ferror doesn't break the loop
     // and instead returns 1.
     for (;;) {
+        // little tiny state machine :^)
+        enum State state = STATE_NORMAL;
         // read as much as fits into the in_buf. the return value indicates
         // how much was read, and whether an error occurred.
         n = fread(in_buf, 1, sizeof(in_buf), in);
