@@ -1,6 +1,7 @@
 # logkeys-cleanup
 
-A simple utility to clean up logkeys log files.
+A simple utility to clean up logkeys log files. Removes any control keys.
+I'm aware that you can turn off logging control keys, but that is a different use-case.
 
 Example:
 
