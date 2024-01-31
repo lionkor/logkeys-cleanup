@@ -103,11 +103,11 @@ static int run(FILE* in) {
     for (;;) {
         // little tiny state machine :^)
         enum State state = STATE_NORMAL;
+        // keeps track of how many characters were written into the output
+        size_t out_n = 0;
         // read as much as fits into the in_buf. the return value indicates
         // how much was read, and whether an error occurred.
         n = fread(in_buf, 1, sizeof(in_buf), in);
-        // keeps track of how many characters were written into the output
-        size_t out_n = 0;
         // if an error occurred, return immediately
         if (n != sizeof(in_buf) && ferror(in) != 0) {
             perror("fread");
