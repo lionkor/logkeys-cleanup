@@ -71,8 +71,11 @@ s_control_sequences[]
 bool is_control(const char* str, size_t len) {
     bool match = false;
     // loop over all pre-programmed control sequences until one matches
-    for (size_t i = 0; !match && i < (sizeof(s_control_sequences) / sizeof(struct StaticString)); ++i) {
+    for (size_t i = 0; i < (sizeof(s_control_sequences) / sizeof(struct StaticString)); ++i) {
         match = safe_str_startswith(str, len, s_control_sequences[i].str, s_control_sequences[i].len);
+        if (match) {
+            break;
+        }
     }
     return match;
 }
