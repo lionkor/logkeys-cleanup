@@ -15,12 +15,14 @@ static char in_buf[4096];
 // buffer used to write results into
 static char out_buf[4096];
 
-#define min(x, y) (x < y ? x : y)
-
 // compares if str1 starts with str2
-bool safe_str_startswith(const char* str1, size_t str1len, const char* str2, size_t str2len) {
-    // use the shorter of the two lengths for the memcmp to avoid out-of-bounds access
-    return memcmp(str1, str2, min(str1len, str2len)) == 0;
+bool safe_str_startswith(const char* haystack, size_t haystack_len, const char* needle, size_t needle_len) {
+    if (haystack_len < needle_len) {
+        // haystack too small to start with needle
+        return false;
+    } else {
+        return memcmp(haystack, needle, needle_len) == 0;
+    }
 }
 
 // this macro fills a StaticString struct with
