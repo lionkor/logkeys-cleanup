@@ -98,11 +98,11 @@ static bool is_control(const char* str, size_t len) {
 // returns 0 on success, non-zero on failure.
 static int run(FILE* in) {
     size_t n = 0;
+    // little tiny state machine :^)
+    enum State state = STATE_NORMAL;
     // keep reading until feof. ferror doesn't break the loop
     // and instead returns 1.
     for (;;) {
-        // little tiny state machine :^)
-        enum State state = STATE_NORMAL;
         // keeps track of how many characters were written into the output
         size_t out_n = 0;
         // read as much as fits into the in_buf. the return value indicates
