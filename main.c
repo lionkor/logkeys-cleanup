@@ -56,7 +56,7 @@ s_control_sequences[]
           STATIC_STR("LMeta"),
           STATIC_STR("LShft"),
           STATIC_STR("Left"),
-          STATIC_STR("PgDown"),
+          STATIC_STR("PgDn"),
           STATIC_STR("PgUp"),
           STATIC_STR("RAlt"),
           STATIC_STR("RCtrl"),
